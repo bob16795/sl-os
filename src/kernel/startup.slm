@@ -1,0 +1,10 @@
+inc "./src/kernel/tty.slh"
+
+proc main 0 0
+  tty.init
+
+  "Hello World!!\r\n" tty.writestr
+  "New Line" tty.writestr
+  
+  ret
+end

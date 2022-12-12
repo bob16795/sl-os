@@ -1,0 +1,40 @@
+class tty
+  enum
+  0   VGA_COLOR_BLACK
+      VGA_COLOR_BLUE
+      VGA_COLOR_GREEN
+      VGA_COLOR_CYAN
+      VGA_COLOR_RED
+      VGA_COLOR_MAGENTA
+      VGA_COLOR_BROWN
+      VGA_COLOR_LIGHT_GREY
+      VGA_COLOR_DARK_GREY
+      VGA_COLOR_LIGHT_BLUE
+      VGA_COLOR_LIGHT_GREEN
+      VGA_COLOR_LIGHT_CYAN
+      VGA_COLOR_LIGHT_RED
+      VGA_COLOR_LIGHT_MAGENTA
+      VGA_COLOR_LIGHT_BROWN
+      VGA_COLOR_WHITE
+  end
+
+  const VGA_WIDTH 80
+  const VGA_HEIGHT 25
+
+  var row 4
+  var col 4
+  var color 4
+  var loc 4
+  var lastkey 4
+
+  const TBS B8000h
+
+  head oper proc strlen 1 1
+  head oper proc init 0 0
+  head oper proc setcolor 1 0
+  head oper proc putat 1 0
+  head oper proc putch 1 0
+  head oper proc write 1 0
+  head oper proc writestr 1 0
+  head oper proc clear 1 0
+end

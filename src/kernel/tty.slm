@@ -1,0 +1,135 @@
+inc "./src/kernel/tty.slh"
+
+class tty
+  proc vgaentrycolor 2 1
+    16 * +
+
+    ret
+  end
+
+  proc vgaentry 2 1
+    256 * ||
+
+    ret
+  end
+
+  proc strlen 1 1
+    copy 1 -
+    do
+      1 +
+
+      copy readc
+    end
+    swap -
+
+    ret
+  end
+
+  proc init 0 0
+    tty.row 0 put disc
+    tty.col 0 put disc
+    tty.color
+    tty.VGA_COLOR_LIGHT_GREY tty.VGA_COLOR_BLACK tty.vgaentrycolor
+    putc disc
+
+    0
+    do
+      0
+      do
+        covr tty.VGA_WIDTH *
+        covr + 2 *
+        tty.TBS +
+        ' ' putc disc
+        covr tty.VGA_WIDTH *
+        covr + 2 *
+        tty.TBS +
+        1 + tty.color readc putc disc
+        
+        1 +
+        copy tty.VGA_WIDTH <
+      end
+      disc
+      
+      1 +
+      copy tty.VGA_HEIGHT <
+    end
+    disc
+
+    ret
+  end
+
+  proc setcolor 1 0
+    tty.color swap putc disc
+
+    ret
+  end
+
+  proc putat 4 0
+    swap tty.VGA_WIDTH * + 2 *
+    tty.loc swap put disc
+
+    tty.TBS
+    tty.loc read + 1 +
+    swap putc disc
+
+    tty.TBS
+    tty.loc read +
+    swap putc disc
+
+    ret
+  end
+
+  proc putch 1 0
+    copy 13 == if
+      tty.row 0 put disc
+
+      disc
+      ret
+    end
+    copy 10 == if
+      tty.col copy read 1 + put disc
+      tty.col read tty.VGA_HEIGHT == if
+        tty.col 0 put disc
+      end
+      disc
+
+      ret
+    end
+
+    tty.color readc
+    tty.col read
+    tty.row read
+    tty.putat
+    
+    tty.row copy read 1 + put disc
+    tty.row read tty.VGA_WIDTH == if
+      tty.row 0 put disc
+      tty.col copy read 1 + put disc
+      tty.col read tty.VGA_HEIGHT == if
+        tty.col 0 put disc
+      end
+    end
+
+    ret
+  end
+
+  proc write 2 0
+    do
+      swap 1 + copy 1 - readc tty.putch
+      swap 1 -
+
+      copy
+    end
+    disc
+    disc
+
+    ret
+  end
+
+  proc writestr 1 0
+    copy tty.strlen tty.write
+
+    ret
+  end
+end
+

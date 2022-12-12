@@ -1,8 +1,9 @@
 default: disk.iso
 
+SOURCES := obj/boot.o obj/kernel/tty.o obj/kernel/startup.o
+
 clean:
-	rm -f obj/kernel.o
-	rm -f obj/kernel/tty.o
+	rm -f $(SOURCES)
 
 obj/boot.o: src/boot.s
 	i686-elf-as src/boot.s -o obj/boot.o
@@ -10,12 +11,12 @@ obj/boot.o: src/boot.s
 obj/%.o: src/%.slm
 	rm -f $<.asm
 	slam -a -o $< $<
-	tools/slamnomain.sh $<.asm
+	tools/slamnomain.sh $<.asm $<
 	i686-elf-as $<.asm -o $@
 	rm $<.asm
 
-disk.bin: linker.ld obj/boot.o obj/kernel.o
-	i686-elf-gcc -T linker.ld -o disk.bin -ffreestanding -O2 -nostdlib obj/boot.o obj/kernel.o -lgcc
+disk.bin: linker.ld $(SOURCES)
+	i686-elf-gcc -T linker.ld -o disk.bin -ffreestanding -O2 -nostdlib $(SOURCES) -lgcc
 
 disk.iso: disk.bin tools/grub.cfg
 	mkdir -p isodir

@@ -26,6 +26,8 @@ tab = {
   "[rdx]": "(%edx)",
   "rsp": "%esp",
   "bl": "%bl",
+  "al": "%al",
+  "dx": "%dx",
 }
 
 with open(sys.argv[1], "r") as file:
@@ -38,13 +40,19 @@ with open(sys.argv[1], "r") as file:
 
     if line.strip() == "":
       continue
-    elif line.strip()[0] == ".":
+    elif len(line) > 3 and line.strip()[0:3] == "str":
+      result += "    " + line
+      continue
+    elif line.strip()[0] == "." and line.strip()[-1] == ":":
       line = curproc + line
       result += line
-      print(line)
+      continue
+    elif line.strip()[0] == ".":
+      result += line
       continue
     elif line.strip()[-1] == ":":
       curproc = line.strip()[:-1]
+      result += ".global " + curproc + "\n"
       result += line
       continue
 
@@ -52,8 +60,11 @@ with open(sys.argv[1], "r") as file:
     params = " ".join(line.strip().split(" ")[1:]).split(",")
 
     for p in range(len(params)):
-      if re.match("[0-9]+", params[p].strip()):
+      if re.match(r"^[0-9]+$", params[p].strip()):
         params[p] = " $" + params[p].strip()
+      elif re.match(r"^[\dA-F]+h$", params[p].strip()):
+        params[p] = "0x" + params[p].strip()[:-1]
+        print(params[p])
       elif params[p].strip() == "": 
         pass
       elif params[p].strip()[0] == ".":
